@@ -1,10 +1,13 @@
-#Nuestro diccinario inicial
+from tabulate import tabulate
 from email import iterators
 import itertools
 from pickletools import read_uint1
 import random
 import re
 import pandas as pd
+import matplotlib.pyplot as plt
+import tkinter as tk
+from tkinter import ttk
 
 
 """diccionario = {
@@ -43,13 +46,13 @@ for idx, row in df.iterrows():
 print(diccionario)
 
 limite_mochila = 1250
-cantidad_iteraciones = 10
+cantidad_iteraciones = 5
 posiblidad_cruza = 10
 posibiliada_muta_individuo = 30
 posivilidad_mutacion_gen = 2
 limite_poblacion = 9
 
-energia_requerido = 800
+energia_requerido = 800 
 protenia_requerido = 600
 grasa_requerido = 100
 calcio_requerido = 1000
@@ -69,6 +72,7 @@ vitamicaC_requerido = 70
 def main(cantidad_iteraciones, diccionario, limite_mochila,posiblidad_cruza,posibiliada_mutacion_individuo,posivilidad_mutacion_gen,energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC,limite_poblacion):
     
     resultado_menores= []
+
     #Genera las combinaciones que digita el usuario
     def combinaciones_posibles(diccionario):
             #id = list(diccionario) #Se obtienen los id del diccionario
@@ -100,8 +104,8 @@ def main(cantidad_iteraciones, diccionario, limite_mochila,posiblidad_cruza,posi
             parejas_generadas  = list(itertools.combinations(resultado_combinacione,2))
             return parejas_generadas
         resutado_emparejamiento = emparejamiento_poblacion(resultado_combinaciones)
-        print("Combinacion: ",resutado_emparejamiento)
-        print(" ")
+        #print("Combinacion: ",resutado_emparejamiento)
+        #print(" ")
 
         #Parejas que cumplen con la posibilidad de cruza
         def posivili_mutacion_individuo(resutado_emparejamiento,posiblidad_cruza):
@@ -170,7 +174,7 @@ def main(cantidad_iteraciones, diccionario, limite_mochila,posiblidad_cruza,posi
             for subarreglo in resultado_mutacion_individuo:
                 subarreglo_lista = list(subarreglo)  # Convertir la tupla en una lista mutable
                 for i in range(len(subarreglo_lista)):
-                    numero_aleatorio = random.randint(1, 10)
+                    numero_aleatorio = random.randint(1, 50)
                     if numero_aleatorio <= posivilidad_mutacion_gen:
                         nueva_posicion = random.randint(0, len(subarreglo_lista)-1)
                         # Intercambiar los elementos de las posiciones actuales y nuevas en la lista
@@ -179,8 +183,8 @@ def main(cantidad_iteraciones, diccionario, limite_mochila,posiblidad_cruza,posi
                 resultado_mutacion_individuo[resultado_mutacion_individuo.index(subarreglo)] = subarreglo_tupla
             return resultado_mutacion_individuo
         resultado_gen_cambio_posicion = posbilidad_gen_cambio_posicion(resultado_mutacion_individuo,posivilidad_mutacion_gen)
-        #print("mutacion del gen",resultado_gen_cambio_posicion)
-        #print(" ")
+        print("mutacion del gen",resultado_gen_cambio_posicion)
+        print(" ")
 
         #Se unen los arreglos inicales con los hijos
         def union_padres_hijos (resultado_gen_cambio_posicion,resultado_combinaciones):
@@ -247,7 +251,7 @@ def main(cantidad_iteraciones, diccionario, limite_mochila,posiblidad_cruza,posi
                 resultado_dif.append((energia_resultado,proteina_resultado,grasa_resultado,calcio_resultado,hierro_resultado,vitaminaA_resultado,tiamina_resultado,riboflavina_resultado,niacina_resultado,foloto_resultado,vitaminac_resultado,elementos[11]))
             return(resultado_dif)
         resultado_diferencia = diferencia(energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC,resultado_suma_valores)
-        #print("diferencia individual",resultado_diferencia)
+        print("diferencia individual",resultado_diferencia)
         #print(" ")
 
         #se suma todo para sacar la diferencia absoluta
@@ -269,8 +273,8 @@ def main(cantidad_iteraciones, diccionario, limite_mochila,posiblidad_cruza,posi
             resultado_menores.append(elemento_menor)
             return resultado_menores
         resultado_ordenamiento = ordenamiento(resultado_diferencia_absoltuta)
-        print(resultado_ordenamiento)
-        #
+        print("ordenamiento",resultado_ordenamiento)
+        
         #elimina de forma alearotia conservando el individuo mas bajo que en este caso seria el mejor
         def poda_aleatoria(resultado_ordenamiento,resultado_padres_hijos):
             while len(resultado_padres_hijos) > limite_poblacion and resultado_ordenamiento:
@@ -287,8 +291,167 @@ def main(cantidad_iteraciones, diccionario, limite_mochila,posiblidad_cruza,posi
         resultado_poda = poda_aleatoria(resultado_ordenamiento,resultado_padres_hijos)
         print(resultado_poda)
         resultado_combinaciones = resultado_poda
-        print("============================================")
-    print(resultado_menores)
+        print(" ")
+        print(resultado_menores)
+
+        #se obtiene los datos de mi mejor individuo mi arreglo
+        def mejores_datos (resultado_menores,diccionario,energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC):
+            mejor_indivuo= resultado_menores[-1]
+            #print(resultado_menores[-1])
+            claves = mejor_indivuo[1]
+            #print(clave)
+            informacion= []
+            sumas= []
+            diferencia = []
+            requerido =[]
+            energiaa = 0
+            proteinass = 0
+            grasass = 0
+            calcioo = 0
+            hierroo = 0
+            vitaminaAA = 0
+            tiaminaa = 0
+            riboflavinaa = 0
+            niacinaa = 0
+            folotoo = 0
+            vitaminaCC = 0
+            for clave in claves[:29]:
+                if clave in diccionario:
+                    datos = diccionario[clave]
+                    informacion.append((datos))
+            print("a",informacion)
+            for elemento in informacion:
+                energiaa += elemento[2]
+                proteinass += elemento[3]
+                grasass += elemento[4]
+                calcioo += elemento[5]
+                hierroo += elemento[6]
+                vitaminaAA += elemento[7]
+                tiaminaa += elemento[8]
+                riboflavinaa += elemento[9]
+                niacinaa += elemento[10]
+                folotoo += elemento[11]
+                vitaminaCC += elemento[12]                
+            sumas.append(["Total"," ",energiaa,proteinass,grasass,calcioo,hierro,vitaminaAA,tiaminaa,riboflavinaa,niacinaa,folotoo,vitaminaCC])
+            print(sumas)
+            for elementos in sumas:
+                energia_resultado = elementos[2] - energia
+                proteina_resultado = elementos[3] - proteina
+                grasa_resultado = elementos[4] - grasa
+                calcio_resultado = elementos[5] - calcio
+                hierro_resultado = elementos[6] - hierro
+                vitaminaA_resultado = elementos[7] - vitaminaA
+                tiamina_resultado = elementos[8] - tiamina
+                riboflavina_resultado = elementos[9] - riboflavina
+                niacina_resultado = elementos[10] - niacina
+                foloto_resultado = elementos[11] - foloto
+                vitaminac_resultado = elementos[12] - vitaminaC
+            diferencia.append(["Diferencia","  ",energia_resultado,proteina_resultado,grasa_resultado,calcio_resultado,hierro_resultado,vitaminaA_resultado,tiamina_resultado,riboflavina_resultado,niacina_resultado,foloto_resultado,vitaminac_resultado])
+            requerido.append(["Requerido","  ",energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC])
+            informacion.extend(sumas)
+            informacion.extend(requerido)
+            informacion.extend(diferencia)
+            print(diferencia)
+            print(requerido)
+            print(informacion)
+            return informacion
+        resultado_mejores_datos = mejores_datos(resultado_menores,diccionario,energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC)
+        
+
+        """def tabla_mejor_individuo(resultado_mejores_datos):
+            print("sss")
+        resultado_mejor_individuo = tabla_mejor_individuo(resultado_mejores_datos)"""
+           
+    def graficacion_resultados(resultado_maximo,resultado_mejores_datos):
+
+                    # Crear la ventana principal
+            ventana = tk.Tk()
+            ventana.geometry("1300x650")  
+            ventana.title("Tabla de Datos")
+
+            # Crear el árbol de datos
+            tabla = ttk.Treeview(ventana)
+
+            # Definir las columnas
+            tabla['columns'] = ('Columna 1', 'Columna 2', 'Columna 3', 'Columna 4', 'Columna 5', 'Columna 6',
+                                'Columna 7', 'Columna 8', 'Columna 9', 'Columna 10', 'Columna 11', 'Columna 12', 'Columna 13')
+
+            # Formatear las columnas
+            tabla.column('#0', width=0, stretch=tk.NO)
+            tabla.column('Columna 1', width=180 )
+            tabla.column('Columna 2', width=120)
+            tabla.column('Columna 3', width=90, anchor=tk.CENTER)
+            tabla.column('Columna 4', width=90, anchor=tk.CENTER)
+            tabla.column('Columna 5', width=90, anchor=tk.CENTER)
+            tabla.column('Columna 6', width=90, anchor=tk.CENTER)
+            tabla.column('Columna 7', width=90, anchor=tk.CENTER)
+            tabla.column('Columna 8', width=90, anchor=tk.CENTER)
+            tabla.column('Columna 9', width=90, anchor=tk.CENTER)
+            tabla.column('Columna 10', width=90, anchor=tk.CENTER)
+            tabla.column('Columna 11', width=90, anchor=tk.CENTER)
+            tabla.column('Columna 12', width=90, anchor=tk.CENTER)
+            tabla.column('Columna 13', width=90, anchor=tk.CENTER)
+            # Resto de las columnas...
+
+            # Agregar encabezados de columna
+            tabla.heading('#0', text='', anchor=tk.CENTER)
+            tabla.heading('Columna 1', text='Alimentos', anchor=tk.CENTER)
+            tabla.heading('Columna 2', text='Categoria', anchor=tk.CENTER)
+            tabla.heading('Columna 3', text='Energia (kcal)', anchor=tk.CENTER)
+            tabla.heading('Columna 4', text='Proteina (g)', anchor=tk.CENTER)
+            tabla.heading('Columna 5', text='Grasa (g)', anchor=tk.CENTER)
+            tabla.heading('Columna 6', text='Calcio (mg)', anchor=tk.CENTER)
+            tabla.heading('Columna 7', text='Hierro (mg)', anchor=tk.CENTER)
+            tabla.heading('Columna 8', text='VitaminaA (µg)', anchor=tk.CENTER)
+            tabla.heading('Columna 9', text='Tiamana (mg)', anchor=tk.CENTER)
+            tabla.heading('Columna 10', text='Riboflavina (mg)', anchor=tk.CENTER)
+            tabla.heading('Columna 11', text='Niacina (mg)', anchor=tk.CENTER)
+            tabla.heading('Columna 12', text='Foloto (µg)', anchor=tk.CENTER)
+            tabla.heading('Columna 13', text='VitaminaC (mg)', anchor=tk.CENTER)
+            # Resto de los encabezados...
+
+            # Agregar filas de datos
+            for i, row in enumerate(resultado_mejores_datos):
+                tabla.insert(parent='', index='end', iid=i, text='', values=row)
+
+            # Ajustar la tabla a la ventana
+            tabla.pack(expand=True, fill=tk.BOTH)
+
+            # Ejecutar el bucle principal de la ventana
+            
+
+
+        #Zona de grafiacion    
+        #=========================================
+            x = [9]
+            y = [1.13]
+
+            
+            #plt.scatter(range(len(resultado_maximo)), resultado_maximo)
+            #plt.scatter(range(len(resultado_maximo)), resultado_minimo)
+            #plt.scatter(range(len(resultado_maximo)), resultado_promedio)
+            #Para que solo grafiquemos la 1 pocicion de cada dato
+            graficar_generaciones = []
+
+            for elementos in resultado_maximo:
+                graficar_generaciones.append(elementos[0])
+            
+            fig, ax = plt.subplots()
+
+            print("Resultados de las mejores generaciones",graficar_generaciones)
+            
+            ax.plot(graficar_generaciones, label='Elemento',color='blue', )
+
+            ax.set_xlabel('Generaciones')
+            ax.set_ylabel('Total')
+            ax.set_xticks(range(len(graficar_generaciones)))
+            ax.legend()
+
+            plt.show()
+            ventana.mainloop()
+    graficacion_resultados(resultado_menores,resultado_mejores_datos)
+    
+    print("============================================")
 
 
 
