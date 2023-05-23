@@ -45,7 +45,7 @@ for idx, row in df.iterrows():
     diccionario[clave] = row.tolist()
 print(diccionario)
 
-limite_mochila = 1250
+"""limite_mochila = 1250
 cantidad_iteraciones = 5
 posiblidad_cruza = 10
 posibiliada_muta_individuo = 30
@@ -62,14 +62,14 @@ tiamina_requerido = 10
 riboflavina_requerido = 10
 niacina_requerido = 20
 foloto_requerido= 120
-vitamicaC_requerido = 70
+vitamicaC_requerido = 70"""
 
 
 
 
 
 #Parametros que se usaran
-def main(cantidad_iteraciones, diccionario, limite_mochila,posiblidad_cruza,posibiliada_mutacion_individuo,posivilidad_mutacion_gen,energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC,limite_poblacion):
+def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion_individuo,posivilidad_mutacion_gen,energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC,limite_poblacion):
     
     resultado_menores= []
 
@@ -440,7 +440,7 @@ def main(cantidad_iteraciones, diccionario, limite_mochila,posiblidad_cruza,posi
 
             print("Resultados de las mejores generaciones",graficar_generaciones)
             
-            ax.plot(graficar_generaciones, label='Elemento',color='blue', )
+            ax.plot(graficar_generaciones, label=f'Mejor opcion {graficar_generaciones[-1]}',color='blue', )
 
             ax.set_xlabel('Generaciones')
             ax.set_ylabel('Total')
@@ -454,5 +454,171 @@ def main(cantidad_iteraciones, diccionario, limite_mochila,posiblidad_cruza,posi
     print("============================================")
 
 
+# Crear la ventana principal
+def datos_valores():
+    cantidad_generaciones = int(iteraciones.get())
+    limite_poblacion = int(poblacion_max.get())
+    posibilidad_de_cruza = float(posi_cruza.get())
+    posibilidad_de_mutacion_individuo = float(posi_individuo.get())
+    posibilidad_de_mutacion_gen = float(posi_gen.get())
+    
+    energia_reque = float(reque_energia.get()) * 100
+    proteina_reque = float(reque_proteina.get())
+    grasa_reque = float(reque_grasa.get())
+    calcio_reque = float(reque_calcio.get())
+    hierro_reque = float(reque_hierro.get())
+    vitaminaA_reque = float(reque_vitaminaA.get())
+    tiamina_reque = float(reque_tiamina.get())
+    riboflavina_reque = float(reque_riboflavina.get())
+    niacina_reque = float(reque_niacina.get())
+    foloto_reque = float(reque_foloto.get())
+    vitaminaC_reque = float(reque_vitaminaC.get())
 
-main(cantidad_iteraciones,diccionario,limite_mochila,posiblidad_cruza,posibiliada_muta_individuo,posivilidad_mutacion_gen,energia_requerido,protenia_requerido,grasa_requerido,calcio_requerido,hierro_requerido,vitaminaA_requerido,tiamina_requerido,riboflavina_requerido,niacina_requerido,foloto_requerido,vitamicaC_requerido,limite_poblacion)
+    main(cantidad_generaciones,diccionario,posibilidad_de_cruza,posibilidad_de_mutacion_individuo,posibilidad_de_mutacion_gen,energia_reque,proteina_reque,grasa_reque,calcio_reque,hierro_reque,vitaminaA_reque,tiamina_reque,riboflavina_reque,niacina_reque,foloto_reque,vitaminaC_reque,limite_poblacion)
+
+    
+
+
+root = tk.Tk()
+root.configure(bg="gray")
+root.title("Mochila")
+root.geometry("900x800")
+
+# Crear los labels
+label1 = tk.Label(root, text="Cantidad de iteraciones:",bg="grey")
+label2 = tk.Label(root, text="Limite de poblacion",bg="grey")
+label3 = tk.Label(root, text="Posibilidad de cruza:",bg="grey")
+label4 = tk.Label(root, text="Posibilidad de mutacion del individuo:",bg="grey")
+label5 = tk.Label(root, text="Posibilidad de mutacion del gen:",bg="grey")
+label6 = tk.Label(root, text="Energia requerido:",bg="grey")
+label7 = tk.Label(root, text="Proteina requerido:",bg="grey")
+label8 = tk.Label(root, text="Grasa requerido:",bg="grey")
+label9 = tk.Label(root, text="Calcio requerido:",bg="grey")
+labe20 = tk.Label(root, text="Hierro requerido:",bg="grey")
+labe21 = tk.Label(root, text="Vitamina A requerido:",bg="grey")
+labe22 = tk.Label(root, text="Tiamina requerido:",bg="grey")
+labe23 = tk.Label(root, text="Rivoflavina requerido:",bg="grey")
+labe24 = tk.Label(root, text="Niacina requerido:",bg="grey")
+labe25 = tk.Label(root, text="Foloto requerido:",bg="grey")
+labe26 = tk.Label(root, text="Vitamina C requerido:",bg="grey")
+
+# Crear los entrys
+iteraciones = tk.Entry(root, width = 50)
+poblacion_max = tk.Entry(root, width = 50)
+posi_cruza = tk.Entry(root, width = 50)
+posi_individuo = tk.Entry(root, width = 50)
+posi_gen = tk.Entry(root, width = 50)
+
+reque_energia = tk.Entry(root, width = 50)
+reque_proteina = tk.Entry(root, width = 50)
+reque_grasa = tk.Entry(root, width = 50)
+reque_calcio = tk.Entry(root, width = 50)
+reque_hierro = tk.Entry(root, width = 50)
+reque_vitaminaA = tk.Entry(root, width = 50)
+reque_tiamina = tk.Entry(root, width = 50)
+reque_riboflavina = tk.Entry(root, width = 50)
+reque_niacina = tk.Entry(root, width = 50)
+reque_foloto = tk.Entry(root, width = 50)
+reque_vitaminaC = tk.Entry(root, width = 50)
+
+#precargar datos
+iteraciones.insert(0,"20")
+poblacion_max.insert(0,"9")
+posi_cruza.insert(0,"35")
+posi_individuo.insert(0,"35")
+posi_gen.insert(0,"11")
+
+reque_energia.insert(0,"11")
+reque_proteina.insert(0,"11")
+reque_grasa.insert(0,"11")
+reque_calcio.insert(0,"11")
+reque_hierro.insert(0,"11")
+reque_vitaminaA.insert(0,"11")
+reque_tiamina.insert(0,"11")
+reque_riboflavina.insert(0,"11")
+reque_niacina.insert(0,"11")
+reque_foloto.insert(0,"11")
+reque_vitaminaC.insert(0,"11")
+
+
+
+
+
+
+
+
+# Crear un botón
+buttonC = tk.Button(root, text="Confirmar", command = datos_valores)
+
+
+# Acomodar el botón en la ventana utilizando grid
+# Acomodar los labels y los entrys en una cuadrícula usando grid
+label1.grid(row=0, column=0)
+label1.config(font=("Arial", 20))
+iteraciones.grid(row=0, column=1)
+
+label2.grid(row=1, column=0)
+label2.config(font=("Arial", 20))
+poblacion_max.grid(row=1, column=1)
+
+label3.grid(row=2, column=0)
+label3.config(font=("Arial", 20))
+posi_cruza.grid(row=2, column=1)
+
+label4.grid(row=3, column=0)
+label4.config(font=("Arial", 20))
+posi_individuo.grid(row=3, column=1)
+
+label5.grid(row=4, column=0)
+label5.config(font=("Arial", 20))
+posi_gen.grid(row=4, column=1)
+
+label6.grid(row=5, column=0)
+label6.config(font=("Arial", 20))
+reque_energia.grid(row=5, column=1)
+
+label7.grid(row=6, column=0)
+label7.config(font=("Arial", 20))
+reque_proteina.grid(row=6, column=1)
+
+label8.grid(row=7, column=0)
+label8.config(font=("Arial", 20))
+reque_grasa.grid(row=7, column=1)
+
+label9.grid(row=8, column=0)
+label9.config(font=("Arial", 20))
+reque_calcio.grid(row=8, column=1)
+
+labe20.grid(row=9, column=0)
+labe20.config(font=("Arial", 20))
+reque_hierro.grid(row=9, column=1)
+
+labe21.grid(row=10, column=0)
+labe21.config(font=("Arial", 20))
+reque_vitaminaA.grid(row=10, column=1)
+
+labe22.grid(row=11, column=0)
+labe22.config(font=("Arial", 20))
+reque_tiamina.grid(row=11, column=1)
+
+labe23.grid(row=12, column=0)
+labe23.config(font=("Arial", 20))
+reque_riboflavina.grid(row=12, column=1)
+
+labe24.grid(row=13, column=0)
+labe24.config(font=("Arial", 20))
+reque_niacina.grid(row=13, column=1)
+
+labe25.grid(row=14, column=0)
+labe25.config(font=("Arial", 20))
+reque_foloto.grid(row=14, column=1)
+
+labe26.grid(row=15, column=0)
+labe26.config(font=("Arial", 20))
+reque_vitaminaC.grid(row=15, column=1) 
+
+
+buttonC.grid(row=16, column=0)
+
+# Mostrar la ventana
+root.mainloop()
