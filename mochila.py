@@ -1,3 +1,4 @@
+from xml.dom.xmlbuilder import DOMBuilderFilter
 from tabulate import tabulate
 from email import iterators
 import itertools
@@ -69,16 +70,19 @@ vitamicaC_requerido = 70"""
 
 
 #Parametros que se usaran
-def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion_individuo,posivilidad_mutacion_gen,energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC,limite_poblacion):
+def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion_individuo,posivilidad_mutacion_gen,energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC,limite_poblacion,Cantidad_individuos):
     
     resultado_menores= []
+    resultado_mayores= []
+    resultado_promedio = []
+
 
     #Genera las combinaciones que digita el usuario
     def combinaciones_posibles(diccionario):
             #id = list(diccionario) #Se obtienen los id del diccionario
         id = [clave for clave in diccionario if isinstance(clave, int)]
         resultado_combinaciones = []
-        for i in range(10):
+        for i in range(Cantidad_individuos):
             muestra = random.sample(id,len(id))
             resultado_combinaciones.append(tuple(muestra))
         return resultado_combinaciones
@@ -98,7 +102,7 @@ def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion
 
         print("a",resultado_combinaciones)
 
-        #Emparejamiento de las comninaciones
+        #Emparejamiento de las comninaciones(parejas)
         def emparejamiento_poblacion (resultado_combinacione,):
             parejas_generadas = [] # Arreglo donde se guardaran todas las parejas generadas
             parejas_generadas  = list(itertools.combinations(resultado_combinacione,2))
@@ -237,22 +241,22 @@ def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion
             resultado_dif = []
             for elementos in resultado_suma_valores:
                 valores = elementos[:11]
-                energia_resultado = valores[0] - energia
-                proteina_resultado = valores[1] - proteina
-                grasa_resultado = valores[2] - grasa
-                calcio_resultado = valores[3] - calcio
-                hierro_resultado = valores[4] - hierro
-                vitaminaA_resultado = valores[5] - vitaminaA
-                tiamina_resultado = valores[6] - tiamina
-                riboflavina_resultado = valores[7] - riboflavina
-                niacina_resultado = valores[8] - niacina
-                foloto_resultado = valores[9] - foloto
-                vitaminac_resultado = valores[10] - vitaminaC
+                energia_resultado = (valores[0] - energia)/energia 
+                proteina_resultado = (valores[1] - proteina)/proteina 
+                grasa_resultado = (valores[2] - grasa)/ grasa
+                calcio_resultado = (valores[3] - calcio)/calcio
+                hierro_resultado = (valores[4] - hierro)/hierro
+                vitaminaA_resultado = (valores[5] - vitaminaA)/vitaminaA
+                tiamina_resultado = (valores[6] - tiamina)/tiamina
+                riboflavina_resultado = (valores[7] - riboflavina)/riboflavina
+                niacina_resultado = (valores[8] - niacina)/niacina
+                foloto_resultado = (valores[9] - foloto)/foloto
+                vitaminac_resultado = (valores[10] - vitaminaC)/ vitaminaC
                 resultado_dif.append((energia_resultado,proteina_resultado,grasa_resultado,calcio_resultado,hierro_resultado,vitaminaA_resultado,tiamina_resultado,riboflavina_resultado,niacina_resultado,foloto_resultado,vitaminac_resultado,elementos[11]))
             return(resultado_dif)
         resultado_diferencia = diferencia(energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC,resultado_suma_valores)
         print("diferencia individual",resultado_diferencia)
-        #print(" ")
+        print(" ")
 
         #se suma todo para sacar la diferencia absoluta
         def diferencia_absoluta(resultado):
@@ -263,8 +267,8 @@ def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion
                 resultado_absoluta.append((suma_elementos,elemento[11],))
             return resultado_absoluta
         resultado_diferencia_absoltuta = diferencia_absoluta(resultado_diferencia)
-        #print("Direfencia absoluta",resultado_diferencia_absoltuta)
-        #print(" ")
+        print("Direfencia absoluta",resultado_diferencia_absoltuta)
+        print(" ")
 
         #ordenamiento de meno a mayor y se guarda el resultado menor
         def ordenamiento(diferencia_absoluta):
@@ -274,6 +278,27 @@ def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion
             return resultado_menores
         resultado_ordenamiento = ordenamiento(resultado_diferencia_absoltuta)
         print("ordenamiento",resultado_ordenamiento)
+
+        #Ordenamiento de mayor a menor y se guarda el resultado mayor
+        def ordenamiento_mayor(diferencia_absoluta):
+            ordenado_mayor = sorted(diferencia_absoluta, key=lambda x: x[0], reverse=True)
+            elemento_mayor = ordenado_mayor[0]
+            resultado_mayores.append(elemento_mayor)
+            return resultado_mayores
+        resultado_ordenamiento_mayor = ordenamiento_mayor(resultado_diferencia_absoltuta)
+        print("resultado ordenammiento mayor",resultado_ordenamiento_mayor)
+
+        def promedio(diferencia_absoluta):
+            suma = 0
+            for elemento in diferencia_absoluta:
+                if isinstance(elemento,tuple):
+                    suma+= elemento[0]
+            prome = suma / len(diferencia_absoluta)
+            resultado_promedio.append(prome)
+            return resultado_promedio
+        resultadoo_promedio = promedio(resultado_diferencia_absoltuta)
+        print(resultadoo_promedio)
+
         
         #elimina de forma alearotia conservando el individuo mas bajo que en este caso seria el mejor
         def poda_aleatoria(resultado_ordenamiento,resultado_padres_hijos):
@@ -299,10 +324,12 @@ def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion
             mejor_indivuo= resultado_menores[-1]
             #print(resultado_menores[-1])
             claves = mejor_indivuo[1]
+            suma_absoluta = 0
             #print(clave)
             informacion= []
             sumas= []
             diferencia = []
+            diferencia_absoluta = []
             requerido =[]
             energiaa = 0
             proteinass = 0
@@ -319,7 +346,6 @@ def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion
                 if clave in diccionario:
                     datos = diccionario[clave]
                     informacion.append((datos))
-            print("a",informacion)
             for elemento in informacion:
                 energiaa += elemento[2]
                 proteinass += elemento[3]
@@ -332,37 +358,39 @@ def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion
                 niacinaa += elemento[10]
                 folotoo += elemento[11]
                 vitaminaCC += elemento[12]                
-            sumas.append(["Total"," ",energiaa,proteinass,grasass,calcioo,hierro,vitaminaAA,tiaminaa,riboflavinaa,niacinaa,folotoo,vitaminaCC])
-            print(sumas)
+            sumas.append(["Total"," ",energiaa,proteinass,grasass,calcioo,hierroo,vitaminaAA,tiaminaa,riboflavinaa,niacinaa,folotoo,vitaminaCC])
             for elementos in sumas:
-                energia_resultado = elementos[2] - energia
-                proteina_resultado = elementos[3] - proteina
-                grasa_resultado = elementos[4] - grasa
-                calcio_resultado = elementos[5] - calcio
-                hierro_resultado = elementos[6] - hierro
-                vitaminaA_resultado = elementos[7] - vitaminaA
-                tiamina_resultado = elementos[8] - tiamina
-                riboflavina_resultado = elementos[9] - riboflavina
-                niacina_resultado = elementos[10] - niacina
-                foloto_resultado = elementos[11] - foloto
-                vitaminac_resultado = elementos[12] - vitaminaC
+                energia_resultado = (elementos[2] - energia)/energia
+                proteina_resultado = (elementos[3] - proteina)/proteina
+                grasa_resultado = (elementos[4] - grasa)/grasa
+                calcio_resultado = (elementos[5] - calcio)/calcio
+                hierro_resultado = (elementos[6] - hierro)/hierro
+                vitaminaA_resultado = (elementos[7] - vitaminaA)/vitaminaA
+                tiamina_resultado = (elementos[8] - tiamina)/tiamina
+                riboflavina_resultado = (elementos[9] - riboflavina)/riboflavina
+                niacina_resultado = (elementos[10] - niacina)/niacina
+                foloto_resultado = (elementos[11] - foloto)/foloto
+                vitaminac_resultado = (elementos[12] - vitaminaC)/vitaminaC
             diferencia.append(["Diferencia","  ",energia_resultado,proteina_resultado,grasa_resultado,calcio_resultado,hierro_resultado,vitaminaA_resultado,tiamina_resultado,riboflavina_resultado,niacina_resultado,foloto_resultado,vitaminac_resultado])
             requerido.append(["Requerido","  ",energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC])
+            #Se hace la suma de la diferencia absoluta
+            suma_absoluta = sum(diferencia[0][2:])
+            diferencia_absoluta.append(["Diferencia absoluta",suma_absoluta])
+            print("todo",diferencia_absoluta)
             informacion.extend(sumas)
             informacion.extend(requerido)
             informacion.extend(diferencia)
-            print(diferencia)
-            print(requerido)
-            print(informacion)
+            informacion.extend(diferencia_absoluta)
+            print("aaaaaaaaaa",diferencia)
             return informacion
         resultado_mejores_datos = mejores_datos(resultado_menores,diccionario,energia,proteina,grasa,calcio,hierro,vitaminaA,tiamina,riboflavina,niacina,foloto,vitaminaC)
-        
+        print(resultado_mejores_datos)
 
         """def tabla_mejor_individuo(resultado_mejores_datos):
             print("sss")
         resultado_mejor_individuo = tabla_mejor_individuo(resultado_mejores_datos)"""
            
-    def graficacion_resultados(resultado_maximo,resultado_mejores_datos):
+    def graficacion_resultados(resultado_menores,resultado_mejores_datos,resultado_mayores,resultado_promedio):
 
                     # Crear la ventana principal
             ventana = tk.Tk()
@@ -431,38 +459,45 @@ def main(cantidad_iteraciones, diccionario,posiblidad_cruza,posibiliada_mutacion
             #plt.scatter(range(len(resultado_maximo)), resultado_minimo)
             #plt.scatter(range(len(resultado_maximo)), resultado_promedio)
             #Para que solo grafiquemos la 1 pocicion de cada dato
-            graficar_generaciones = []
+            graficar_menores = []
+            graficar_mayores = []
 
-            for elementos in resultado_maximo:
-                graficar_generaciones.append(elementos[0])
-            
+
+            for elementos in resultado_menores:
+                graficar_menores.append(elementos[0])
+            for elementos in resultado_mayores:
+                graficar_mayores.append(elementos[0])
+
             fig, ax = plt.subplots()
 
-            print("Resultados de las mejores generaciones",graficar_generaciones)
+            print("Resultados de las mejores generaciones",graficar_menores)
             
-            ax.plot(graficar_generaciones, label=f'Mejor opcion {graficar_generaciones[-1]}',color='blue', )
-
+            ax.plot(graficar_menores, label=f'Menor {graficar_menores[-1]}',color='blue', )
+            ax.plot(graficar_mayores, label=f'Mayor {graficar_mayores[-1]}',color='green', )
+            ax.plot(resultado_promedio, label='Promedio',color='black', )
+            
             ax.set_xlabel('Generaciones')
             ax.set_ylabel('Total')
-            ax.set_xticks(range(len(graficar_generaciones)))
+            ax.set_xticks(range(len(graficar_menores)))
             ax.legend()
 
             plt.show()
             ventana.mainloop()
-    graficacion_resultados(resultado_menores,resultado_mejores_datos)
+    graficacion_resultados(resultado_menores,resultado_mejores_datos,resultado_mayores,resultado_promedio)
     
     print("============================================")
 
 
 # Crear la ventana principal
 def datos_valores():
+    Cantidad_individuos = int(Cantidad_de_individuos.get())
     cantidad_generaciones = int(iteraciones.get())
     limite_poblacion = int(poblacion_max.get())
     posibilidad_de_cruza = float(posi_cruza.get())
     posibilidad_de_mutacion_individuo = float(posi_individuo.get())
     posibilidad_de_mutacion_gen = float(posi_gen.get())
     
-    energia_reque = float(reque_energia.get()) * 100
+    energia_reque = float(reque_energia.get())
     proteina_reque = float(reque_proteina.get())
     grasa_reque = float(reque_grasa.get())
     calcio_reque = float(reque_calcio.get())
@@ -474,7 +509,7 @@ def datos_valores():
     foloto_reque = float(reque_foloto.get())
     vitaminaC_reque = float(reque_vitaminaC.get())
 
-    main(cantidad_generaciones,diccionario,posibilidad_de_cruza,posibilidad_de_mutacion_individuo,posibilidad_de_mutacion_gen,energia_reque,proteina_reque,grasa_reque,calcio_reque,hierro_reque,vitaminaA_reque,tiamina_reque,riboflavina_reque,niacina_reque,foloto_reque,vitaminaC_reque,limite_poblacion)
+    main(cantidad_generaciones,diccionario,posibilidad_de_cruza,posibilidad_de_mutacion_individuo,posibilidad_de_mutacion_gen,energia_reque,proteina_reque,grasa_reque,calcio_reque,hierro_reque,vitaminaA_reque,tiamina_reque,riboflavina_reque,niacina_reque,foloto_reque,vitaminaC_reque,limite_poblacion,Cantidad_individuos)
 
     
 
@@ -485,11 +520,12 @@ root.title("Mochila")
 root.geometry("900x800")
 
 # Crear los labels
+labe27 = tk.Label(root, text="Cantidad de individuos:",bg="grey")
 label1 = tk.Label(root, text="Cantidad de iteraciones:",bg="grey")
 label2 = tk.Label(root, text="Limite de poblacion",bg="grey")
-label3 = tk.Label(root, text="Posibilidad de cruza:",bg="grey")
-label4 = tk.Label(root, text="Posibilidad de mutacion del individuo:",bg="grey")
-label5 = tk.Label(root, text="Posibilidad de mutacion del gen:",bg="grey")
+label3 = tk.Label(root, text="probabilidad de cruza:",bg="grey")
+label4 = tk.Label(root, text="probabilidad de mutacion del individuo:",bg="grey")
+label5 = tk.Label(root, text="Probabilidad de mutacion del gen:",bg="grey")
 label6 = tk.Label(root, text="Energia requerido:",bg="grey")
 label7 = tk.Label(root, text="Proteina requerido:",bg="grey")
 label8 = tk.Label(root, text="Grasa requerido:",bg="grey")
@@ -503,6 +539,7 @@ labe25 = tk.Label(root, text="Foloto requerido:",bg="grey")
 labe26 = tk.Label(root, text="Vitamina C requerido:",bg="grey")
 
 # Crear los entrys
+Cantidad_de_individuos = tk.Entry(root, width = 50)
 iteraciones = tk.Entry(root, width = 50)
 poblacion_max = tk.Entry(root, width = 50)
 posi_cruza = tk.Entry(root, width = 50)
@@ -528,17 +565,17 @@ posi_cruza.insert(0,"35")
 posi_individuo.insert(0,"35")
 posi_gen.insert(0,"11")
 
-reque_energia.insert(0,"11")
-reque_proteina.insert(0,"11")
-reque_grasa.insert(0,"11")
-reque_calcio.insert(0,"11")
-reque_hierro.insert(0,"11")
-reque_vitaminaA.insert(0,"11")
-reque_tiamina.insert(0,"11")
-reque_riboflavina.insert(0,"11")
-reque_niacina.insert(0,"11")
-reque_foloto.insert(0,"11")
-reque_vitaminaC.insert(0,"11")
+reque_energia.insert(0,"6000")
+reque_proteina.insert(0,"250")
+reque_grasa.insert(0,"50")
+reque_calcio.insert(0,"500")
+reque_hierro.insert(0,"100")
+reque_vitaminaA.insert(0,"2000")
+reque_tiamina.insert(0,"50")
+reque_riboflavina.insert(0,"30")
+reque_niacina.insert(0,"50")
+reque_foloto.insert(0,"300")
+reque_vitaminaC.insert(0,"50")
 
 
 
@@ -615,10 +652,14 @@ reque_foloto.grid(row=14, column=1)
 
 labe26.grid(row=15, column=0)
 labe26.config(font=("Arial", 20))
-reque_vitaminaC.grid(row=15, column=1) 
+reque_vitaminaC.grid(row=15, column=1)
+
+labe27.grid(row=16, column=0)
+labe27.config(font=("Arial", 20))
+Cantidad_de_individuos.grid(row=16, column=1) 
 
 
-buttonC.grid(row=16, column=0)
+buttonC.grid(row=17, column=0)
 
 # Mostrar la ventana
 root.mainloop()
